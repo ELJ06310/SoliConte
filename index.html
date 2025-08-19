@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Solicitar Contenido - MegaPLUS+</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #000; /* Fondo negro */
+      margin: 0;
+      padding: 20px;
+      color: #fff; /* Texto blanco */
+    }
+    
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+      background-color: #000; /* Negro también dentro */
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #444; /* Línea sutil gris */
+    }
+    
+    h1 {
+      color: #fff; /* Blanco */
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #fff; /* Blanco */
+    }
+    
+    select,
+    input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #666;
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: #111; /* Negro más claro para inputs */
+      color: #fff;
+      margin-bottom: 15px;
+      transition: border 0.3s;
+    }
+    
+    select:focus,
+    input:focus {
+      border-color: #fff; /* Blanco al enfocar */
+      outline: none;
+    }
+    
+    .btn-submit {
+      background: #fff; /* Botón blanco */
+      color: #000; /* Texto negro */
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    
+    .btn-submit:hover {
+      background: #ccc;
+      transform: translateY(-2px);
+    }
+    
+    .success-message, .error-message, .loading {
+      display: none;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .success-message {
+      background-color: #0a0;
+      color: #fff;
+    }
+    
+    .error-message {
+      background-color: #a00;
+      color: #fff;
+    }
+    
+    .loading {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Solicitar Contenido</h1>
+    
+    <div id="success-message" class="success-message">
+      ¡Solicitud enviada con éxito! Gracias por tu sugerencia.
+    </div>
+    <div id="error-message" class="error-message">
+      Error al enviar la solicitud. Inténtalo más tarde.
+    </div>
+    <div id="loading" class="loading">
+      Enviando solicitud...
+    </div>
+    
+    <form id="request-form" action="https://formspree.io/f/mvgopryv" method="POST">
+      
+      <label for="content-type">Tipo de contenido</label>
+      <select id="content-type" name="content-type" required>
+        <option value="" disabled selected>Selecciona</option>
+        <option value="Película">Película</option>
+        <option value="Serie">Serie</option>
+        <option value="Saga">Saga</option>
+      </select>
+      
+      <label for="content-title">Título</label>
+      <input type="text" id="content-title" name="content-title" required placeholder="Ej: Interstellar, The Mandalorian, Harry Potter...">
+      
+      <button type="submit" class="btn-submit">Enviar Solicitud</button>
+    </form>
+  </div>
+  
+  <script>
+    const form = document.getElementById('request-form');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('success-message').style.display = 'none';
+      document.getElementById('error-message').style.display = 'none';
+      
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(response => {
+        document.getElementById('loading').style.display = 'none';
+        if (response.ok) {
+          document.getElementById('success-message').style.display = 'block';
+          form.reset();
+        } else {
+          document.getElementById('error-message').style.display = 'block';
+        }
+      })
+      .catch(() => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error-message').style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>
