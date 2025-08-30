@@ -3,27 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Solicitar Contenido - MegaPLUS+</title>
+  <title>MegaPLUS+ - Solicitar o Reportar Contenido</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #000; /* Fondo negro */
+      background-color: #000;
       margin: 0;
       padding: 20px;
-      color: #fff; /* Texto blanco */
+      color: #fff;
     }
     
     .container {
-      max-width: 420px;
+      max-width: 450px;
       margin: 0 auto;
-      background-color: #000; /* Negro también dentro */
+      background-color: #000;
       padding: 25px;
       border-radius: 12px;
-      border: 1px solid #444; /* Línea sutil gris */
+      border: 1px solid #444;
+      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
     }
     
     h1 {
-      color: #fff; /* Blanco */
+      color: #fff;
       text-align: center;
       margin-bottom: 20px;
       font-size: 24px;
@@ -33,53 +34,64 @@
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
-      color: #fff; /* Blanco */
+      color: #fff;
     }
     
     select,
-    input[type="text"] {
-      width: 90%;
-      padding: 10px;
+    input[type="text"],
+    textarea {
+      width: 93%;
+      padding: 12px;
       border: 1px solid #666;
       border-radius: 6px;
       font-size: 16px;
-      background-color: #111; /* Negro más claro para inputs */
+      background-color: #111;
       color: #fff;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
       transition: border 0.3s;
+      font-family: inherit;
+    }
+    
+    textarea {
+      min-height: 100px;
+      resize: vertical;
     }
     
     select:focus,
-    input:focus {
-      border-color: #fff; /* Blanco al enfocar */
+    input:focus,
+    textarea:focus {
+      border-color: #fff;
       outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
     }
     
     .btn-submit {
-      background: #fff; /* Botón blanco */
-      color: #000; /* Texto negro */
+      background: #fff;
+      color: #000;
       border: none;
-      padding: 14px;
+      padding: 15px;
       font-size: 16px;
       border-radius: 6px;
       cursor: pointer;
       width: 100%;
       font-weight: 700;
       transition: all 0.3s;
+      margin-top: 10px;
     }
     
     .btn-submit:hover {
       background: #ccc;
       transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
     }
     
     .success-message, .error-message, .loading {
       display: none;
-      padding: 12px;
+      padding: 15px;
       border-radius: 6px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       text-align: center;
-      font-size: 14px;
+      font-size: 15px;
     }
     
     .success-message {
@@ -94,12 +106,168 @@
     
     .loading {
       color: #fff;
+      background-color: #333;
+    }
+    
+    .form-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .option-selector {
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    
+    .option-selector select {
+      width: 100%;
+      background-color: #222;
+      font-weight: 600;
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #ccc;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Solicitar Contenido</h1>
+    <h1>MegaPLUS+</h1>
+    <div class="form-header">Selecciona qué acción deseas realizar</div>
+    
+    <div class="option-selector">
+      <label for="action-type">¿Qué deseas?</label>
+      <select id="action-type" name="action-type">
+        <option value="" disabled selected>Selecciona una opción</option>
+        <option value="request">Solicitar</option>
+        <option value="report">Reportar</option>
+      </select>
+    </div>
+    
+    <div id="success-message" class="success-message">
+      ¡Operación realizada con éxito!
+    </div>
+    <div id="error-message" class="error-message">
+      Error al procesar la solicitud. Inténtalo más tarde.
+    </div>
+    <div id="loading" class="loading">
+      Procesando tu solicitud...
+    </div>
+    
+    <!-- Formulario para Solicitar Contenido -->
+    <form id="request-form" class="form-section" action="https://formspree.io/f/mvgopryv" method="POST">
+      <label for="content-type">Tipo de contenido</label>
+      <select id="content-type" name="content-type" required>
+        <option value="" disabled selected>Selecciona</option>
+        <option value="Película">Película</option>
+        <option value="Serie">Serie</option>
+        <option value="Saga">Saga</option>
+      </select>
+      
+      <label for="content-title">Título</label>
+      <input type="text" id="content-title" name="content-title" required placeholder="Ej: Interstellar, The Mandalorian, Harry Potter...">
+      
+      <button type="submit" class="btn-submit">Enviar Solicitud</button>
+    </form>
+    
+    <!-- Formulario para Reportar Contenido -->
+    <form id="report-form" class="form-section" action="https://formspree.io/f/mvgopryv" method="POST">
+      <label for="report-content-type">Tipo de contenido</label>
+      <select id="report-content-type" name="content-type" required>
+        <option value="" disabled selected>Selecciona</option>
+        <option value="Película">Película</option>
+        <option value="Serie">Serie</option>
+        <option value="Saga">Saga</option>
+      </select>
+      
+      <label for="report-content-title">Título</label>
+      <input type="text" id="report-content-title" name="content-title" required placeholder="Ej: Interstellar, The Mandalorian, Harry Potter...">
+      
+      <label for="problem">¿Cuál es el problema?</label>
+      <textarea id="problem" name="problem" required placeholder="Describe el problema que has encontrado..."></textarea>
+      
+      <button type="submit" class="btn-submit">Enviar Reporte</button>
+    </form>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const actionType = document.getElementById('action-type');
+      const requestForm = document.getElementById('request-form');
+      const reportForm = document.getElementById('report-form');
+      const successMessage = document.getElementById('success-message');
+      const errorMessage = document.getElementById('error-message');
+      const loading = document.getElementById('loading');
+      
+      // Manejar el cambio de selección
+      actionType.addEventListener('change', function() {
+        // Ocultar todos los formularios primero
+        requestForm.style.display = 'none';
+        reportForm.style.display = 'none';
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Mostrar el formulario correspondiente
+        if (this.value === 'request') {
+          requestForm.style.display = 'block';
+        } else if (this.value === 'report') {
+          reportForm.style.display = 'block';
+        }
+      });
+      
+      // Configurar el manejo de envío para ambos formularios
+      function setupFormSubmit(form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          loading.style.display = 'block';
+          successMessage.style.display = 'none';
+          errorMessage.style.display = 'none';
+          
+          const formData = new FormData(this);
+          
+          fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          })
+          .then(response => {
+            loading.style.display = 'none';
+            if (response.ok) {
+              successMessage.style.display = 'block';
+              successMessage.textContent = this.id === 'request-form' ? 
+                '¡Solicitud enviada con éxito! Gracias por tu sugerencia.' : 
+                '¡Reporte enviado con éxito! Gracias por tu colaboración.';
+              form.reset();
+              actionType.value = '';
+              requestForm.style.display = 'none';
+              reportForm.style.display = 'none';
+            } else {
+              errorMessage.style.display = 'block';
+            }
+          })
+          .catch(() => {
+            loading.style.display = 'none';
+            errorMessage.style.display = 'block';
+          });
+        });
+      }
+      
+      // Configurar ambos formularios
+      setupFormSubmit(requestForm);
+      setupFormSubmit(reportForm);
+    });
+  </script>
+</body>
+</html>    <h1>Solicitar Contenido</h1>
     
     <div id="success-message" class="success-message">
       ¡Solicitud enviada con éxito! Gracias por tu sugerencia.
