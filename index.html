@@ -1,304 +1,837 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MegaPLUS+ - Solicitar o Reportar Contenido</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #000;
-      margin: 0;
-      padding: 20px;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    
-    .container {
-      width: 100%;
-      max-width: 450px;
-      background-color: #000;
-      padding: 25px;
-      border-radius: 12px;
-      border: 1px solid #444;
-      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05);
-    }
-    
-    h1 {
-      color: #fff;
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #fff;
-    }
-    
-    select,
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #666;
-      border-radius: 6px;
-      font-size: 16px;
-      background-color: #111;
-      color: #fff;
-      margin-bottom: 18px;
-      transition: border 0.3s;
-      font-family: inherit;
-    }
-    
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    select:focus,
-    input:focus,
-    textarea:focus {
-      border-color: #fff;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-    }
-    
-    .btn-submit {
-      background: #fff;
-      color: #000;
-      border: none;
-      padding: 15px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: 700;
-      transition: all 0.3s;
-      margin-top: 10px;
-    }
-    
-    .btn-submit:hover {
-      background: #ccc;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
-    }
-    
-    .success-message, .error-message, .loading {
-      display: none;
-      padding: 15px;
-      border-radius: 6px;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 15px;
-    }
-    
-    .success-message {
-      background-color: #0a0;
-      color: #fff;
-    }
-    
-    .error-message {
-      background-color: #a00;
-      color: #fff;
-    }
-    
-    .loading {
-      color: #fff;
-      background-color: #333;
-    }
-    
-    .form-section {
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .option-selector {
-      margin-bottom: 25px;
-      text-align: center;
-    }
-    
-    .option-selector select {
-      width: 100%;
-      background-color: #222;
-      font-weight: 600;
-    }
-    
-    .form-header {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #ccc;
-      font-size: 16px;
-    }
-    
-    /* Media queries para responsividad */
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
-      }
-      
-      .container {
-        padding: 20px 15px;
-        border: none;
-        box-shadow: none;
-      }
-      
-      h1 {
-        font-size: 22px;
-      }
-      
-      select,
-      input[type="text"],
-      textarea {
-        padding: 10px;
-        font-size: 16px; /* Mantener tamaño de fuente para evitar zoom en iOS */
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Generador de Plataformas TMDB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #000000;
+            color: #ffcc00;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .requester-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #1c1c1c;
+            padding: 10px 15px;
+            border-radius: 30px;
+            border: 1px solid #ffcc00;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .requester-info:hover {
+            background-color: #333;
+        }
+
+        .requester-info i {
+            color: #ffcc00;
+            font-size: 1.2rem;
+        }
+
+        .requester-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .requester-name {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .request-count {
+            font-size: 0.8rem;
+            color: #bbb;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 20px;
+            justify-items: center;
+        }
+
+        select, button, input {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        button {
+            background-color: #ffcc00;
+            color: #1c1c1c;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #e6b800;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .content-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
+        }
+
+        .content-item {
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            width: 100%;
+            max-width: 250px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .content-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .content-item img {
+            width: 100%;
+            height: auto;
+        }
+
+        .content-item h3 {
+            font-size: 1rem;
+            margin: 10px 0;
+            color: #ffcc00;
+        }
+
+        .content-item p {
+            margin: 5px 0;
+            font-size: 0.8rem;
+            color: #bbb;
+        }
+
+        .count {
+            text-align: center;
+            color: #ffcc00;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            margin: 15px 0;
+        }
+
+        .pagination button {
+            width: 100px;
+            height: 35px;
+            padding: 5px 8px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ffcc00;
+            color: #1c1c1c;
+            text-align: center;
+        }
+
+        .pagination button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            background-color: #ffcc00;
+            color: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .loader.show {
+            opacity: 1;
+        }
+
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid #ffcc00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* User Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1c1c1c;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #ffcc00;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffcc00;
+        }
+
+        .email-note {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 5px;
+        }
+
+        .request-limit-info {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            color: #ffcc00;
+        }
+
+        .cooldown-timer {
+            color: #ff6666;
+            font-weight: bold;
+        }
+
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mega-plus-notice {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            border-left: 4px solid #ffcc00;
+        }
+
+        .mega-plus-notice h3 {
+            color: #ffcc00;
+            margin-top: 0;
+        }
+
+        @media (max-width: 76px) {
+            .content-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 48px) {
+            .content-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>MegaPLUS+</h1>
-    <div class="form-header">Selecciona qué acción deseas realizar</div>
-    
-    <div class="option-selector">
-      <label for="action-type">¿Qué deseas?</label>
-      <select id="action-type" name="action-type">
-        <option value="" disabled selected>Selecciona una opción</option>
-        <option value="request">Solicitar</option>
-        <option value="report">Reportar</option>
-      </select>
+
+<header>
+    <div class="header-content">
+        <h1>Películas y Series por Plataforma</h1>
+        <div class="requester-info" onclick="showUserModal()">
+            <i class="fas fa-user-circle"></i>
+            <div class="requester-details">
+                <span class="requester-name" id="userNameDisplay">Usuario</span>
+                <span class="request-count" id="requestCount">Pedidos: 0/3</span>
+            </div>
+        </div>
     </div>
-    
-    <div id="success-message" class="success-message">
-      ¡Operación realizada con éxito!
-    </div>
-    <div id="error-message" class="error-message">
-      Error al procesar la solicitud. Inténtalo más tarde.
-    </div>
-    <div id="loading" class="loading">
-      Procesando tu solicitud...
-    </div>
-    
-    <!-- Formulario para Solicitar Contenido -->
-    <form id="request-form" class="form-section" action="https://formspree.io/f/mvgopryv" method="POST">
-      <label for="content-type">Tipo de contenido</label>
-      <select id="content-type" name="content-type" required>
-        <option value="" disabled selected>Selecciona</option>
-        <option value="Película">Película</option>
-        <option value="Serie">Serie</option>
-        <option value="Saga">Saga</option>
-      </select>
-      
-      <label for="content-title">Título</label>
-      <input type="text" id="content-title" name="content-title" required placeholder="Ej: Interstellar, The Mandalorian, Harry Potter...">
-      
-      <button type="submit" class="btn-submit">Enviar Solicitud</button>
-    </form>
-    
-    <!-- Formulario para Reportar Contenido -->
-    <form id="report-form" class="form-section" action="https://formspree.io/f/mvgopryv" method="POST">
-      <label for="report-content-type">Tipo de contenido</label>
-      <select id="report-content-type" name="content-type" required>
-        <option value="" disabled selected>Selecciona</option>
-        <option value="Película">Película</option>
-        <option value="Serie">Serie</option>
-        <option value="Saga">Saga</option>
-      </select>
-      
-      <label for="report-content-title">Título</label>
-      <input type="text" id="report-content-title" name="content-title" required placeholder="Ej: Interstellar, The Mandalorian, Harry Potter...">
-      
-      <label for="problem">¿Cuál es el problema?</label>
-      <textarea id="problem" name="problem" required placeholder="Describe el problema que has encontrado..."></textarea>
-      
-      <button type="submit" class="btn-submit">Enviar Reporte</button>
-    </form>
-  </div>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const actionType = document.getElementById('action-type');
-      const requestForm = document.getElementById('request-form');
-      const reportForm = document.getElementById('report-form');
-      const successMessage = document.getElementById('success-message');
-      const errorMessage = document.getElementById('error-message');
-      const loading = document.getElementById('loading');
-      
-      // Manejar el cambio de selección
-      actionType.addEventListener('change', function() {
-        // Ocultar todos los formularios primero
-        requestForm.style.display = 'none';
-        reportForm.style.display = 'none';
-        successMessage.style.display = 'none';
-        errorMessage.style.display = 'none';
-        
-        // Mostrar el formulario correspondiente
-        if (this.value === 'request') {
-          requestForm.style.display = 'block';
-        } else if (this.value === 'report') {
-          reportForm.style.display = 'block';
-        }
-      });
-      
-      // Configurar el manejo de envío para ambos formularios
-      function setupFormSubmit(form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          loading.style.display = 'block';
-          successMessage.style.display = 'none';
-          errorMessage.style.display = 'none';
-          
-          const formData = new FormData(this);
-          
-          fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-          })
-          .then(response => {
-            loading.style.display = 'none';
-            if (response.ok) {
-              successMessage.style.display = 'block';
-              successMessage.textContent = this.id === 'request-form' ? 
-                '¡Solicitud enviada con éxito! Gracias por tu sugerencia.' : 
-                '¡Reporte enviado con éxito! Gracias por tu colaboración.';
-              form.reset();
-              actionType.value = '';
-              requestForm.style.display = 'none';
-              reportForm.style.display = 'none';
-            } else {
-              errorMessage.style.display = 'block';
+</header>
+
+<div class="request-limit-info">
+    <p>Límite de pedidos: <span id="currentRequests">0</span>/3 cada 5 minutos</p>
+    <p id="cooldownMessage" style="display: none;">Tiempo de espera: <span class="cooldown-timer" id="cooldownTimer">5:00</span></p>
+</div>
+
+<div class="filters">
+    <select id="mediaType">
+        <option value="movie">Películas</option>
+        <option value="tv">Series</option>
+    </select>
+
+    <select id="platform">
+        <option value="">Plataformas</option>
+        <option value="8">Netflix</option>
+        <option value="337">Disney+</option>
+        <option value="9">Amazon Prime Video</option>
+        <option value="384">HBO Max</option>
+        <option value="15">Hulu</option>
+        <option value="387">Paramount+</option>
+        <option value="350">Apple TV+</option>
+        <option value="531">Star+</option>
+    </select>
+
+    <select id="genre">
+        <option value="">Todos los géneros</option>
+        <option value="28">Acción</option>
+        <option value="12">Aventura</option>
+        <option value="16">Animación</option>
+        <option value="35">Comedia</option>
+        <option value="80">Crimen</option>
+        <option value="18">Drama</option>
+        <option value="10751">Familiar</option>
+        <option value="14">Fantasía</option>
+        <option value="27">Horror</option>
+        <option value="9648">Misterio</option>
+        <option value="878">Ciencia Ficción</option>
+        <option value="53">Suspenso</option>
+    </select>
+
+    <select id="year">
+        <option value="">Todos los años</option>
+        <script>
+            for (let i = new Date().getFullYear(); i >= 1950; i--) {
+                document.write(`<option value="${i}">${i}</option>`);
             }
-          })
-          .catch(() => {
-            loading.style.display = 'none';
-            errorMessage.style.display = 'block';
-          });
-        });
-      }
-      
-      // Configurar ambos formularios
-      setupFormSubmit(requestForm);
-      setupFormSubmit(reportForm);
+        </script>
+    </select>
+
+    <select id="country">
+        <option value="">Selecciona un País</option>
+        <option value="US">Estados Unidos</option>
+        <option value="MX">México</option>
+        <option value="ES">España</option>
+        <option value="AR">Argentina</option>
+        <option value="CO">Colombia</option>
+        <option value="BR">Brasil</option>
+        <option value="CA">Canadá</option>
+        <option value="GB">Reino Unido</option>
+        <option value="DE">Alemania</option>
+        <option value="FR">Francia</option>
+    </select>
+</div>
+
+<div style="text-align: center;">
+    <button onclick="searchContent()">Buscar</button>
+</div>
+
+<div id="contentCount" class="count"></div>
+<div id="contentList" class="content-list"></div>
+
+<div id="pagination" class="pagination" style="display: none;">
+    <button id="prevPage" onclick="changePage(-1)">« Anterior</button>
+    <span id="pageInfo"></span>
+    <button id="nextPage" onclick="changePage(1)">Siguiente »</button>
+</div>
+
+<div id="notification" class="notification"></div>
+
+<!-- Modal para ingresar/editar nombre de usuario y email -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-edit"></i> Mi Perfil</h2>
+        </div>
+        
+        <div class="form-group">
+            <label for="userName">Nombre de usuario</label>
+            <input type="text" id="userName" placeholder="Tu nombre de usuario">
+        </div>
+        
+        <div class="form-group">
+            <label for="userEmail">Correo electrónico</label>
+            <input type="email" id="userEmail" placeholder="tu@email.com">
+            <p class="email-note">* Solo para notificarte cuando tu pedido esté disponible en MegaPLUS+ (solo el administrador lo verá)</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="notifyMe">
+                <input type="checkbox" id="notifyMe"> Notificarme cuando mi pedido esté en MegaPLUS+
+            </label>
+        </div>
+        
+        <div class="profile-actions">
+            <button onclick="saveUserData()"><i class="fas fa-save"></i> Guardar</button>
+            <button onclick="closeUserModal()" style="background-color: #666;"><i class="fas fa-times"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const apiKey = '1715f9106c23e43297aafeccdbc89c20';
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentContent = [];
+    let userName = '';
+    let userEmail = '';
+    let notifyMe = false;
+    let requestCount = 0;
+    let lastRequestTime = null;
+    let cooldownInterval = null;
+
+    // Obtener elementos de la interfaz
+    const notification = document.getElementById('notification');
+    const userModal = document.getElementById('userModal');
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    const requestCountDisplay = document.getElementById('requestCount');
+    const currentRequestsDisplay = document.getElementById('currentRequests');
+    const cooldownMessage = document.getElementById('cooldownMessage');
+    const cooldownTimer = document.getElementById('cooldownTimer');
+
+    // Verificar si ya hay datos guardados al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedUserName = localStorage.getItem('tmdbUserName');
+        const savedUserEmail = localStorage.getItem('tmdbUserEmail');
+        const savedNotifyMe = localStorage.getItem('tmdbNotifyMe');
+        const savedRequestCount = localStorage.getItem('tmdbRequestCount');
+        const savedLastRequestTime = localStorage.getItem('tmdbLastRequestTime');
+        
+        if (savedUserName) {
+            userName = savedUserName;
+            userNameDisplay.textContent = userName;
+            document.getElementById('userName').value = userName;
+        }
+        
+        if (savedUserEmail) {
+            userEmail = savedUserEmail;
+            document.getElementById('userEmail').value = userEmail;
+        }
+        
+        if (savedNotifyMe) {
+            notifyMe = savedNotifyMe === 'true';
+            document.getElementById('notifyMe').checked = notifyMe;
+        }
+        
+        if (savedRequestCount) {
+            requestCount = parseInt(savedRequestCount);
+            updateRequestCounter();
+        }
+        
+        if (savedLastRequestTime) {
+            lastRequestTime = parseInt(savedLastRequestTime);
+            checkCooldown();
+        }
+        
+        // Mostrar el modal si no hay nombre guardado
+        if (!userName) {
+            showUserModal();
+        }
     });
-  </script>
+
+    function showUserModal() {
+        userModal.style.display = 'flex';
+    }
+
+    function closeUserModal() {
+        userModal.style.display = 'none';
+    }
+
+    function saveUserData() {
+        const nameInput = document.getElementById('userName');
+        const emailInput = document.getElementById('userEmail');
+        const notifyInput = document.getElementById('notifyMe');
+        
+        if (nameInput.value.trim() !== '') {
+            userName = nameInput.value.trim();
+            userEmail = emailInput.value.trim();
+            notifyMe = notifyInput.checked;
+            
+            localStorage.setItem('tmdbUserName', userName);
+            localStorage.setItem('tmdbUserEmail', userEmail);
+            localStorage.setItem('tmdbNotifyMe', notifyMe);
+            
+            userNameDisplay.textContent = userName;
+            userModal.style.display = 'none';
+            
+            if (notifyMe && userEmail) {
+                showNotification('Perfil guardado. Te notificaremos cuando tu pedido esté en MegaPLUS+', true);
+            } else {
+                showNotification('Perfil guardado correctamente', true);
+            }
+        } else {
+            showNotification('Por favor ingresa tu nombre de usuario', false);
+        }
+    }
+
+    function updateRequestCounter() {
+        requestCountDisplay.textContent = `Pedidos: ${requestCount}/3`;
+        currentRequestsDisplay.textContent = requestCount;
+        localStorage.setItem('tmdbRequestCount', requestCount);
+    }
+
+    function checkCooldown() {
+        if (!lastRequestTime) return;
+        
+        const now = Date.now();
+        const elapsed = now - lastRequestTime;
+        const cooldownTime = 5 * 60 * 1000; // 5 minutos en milisegundos
+        
+        if (elapsed < cooldownTime && requestCount >= 3) {
+            // Está en tiempo de espera
+            startCooldownTimer(cooldownTime - elapsed);
+        } else if (elapsed >= cooldownTime && requestCount >= 3) {
+            // Se reinicia el contador después del tiempo de espera
+            requestCount = 0;
+            updateRequestCounter();
+        }
+    }
+
+    function startCooldownTimer(timeRemaining) {
+        cooldownMessage.style.display = 'block';
+        
+        if (cooldownInterval) {
+            clearInterval(cooldownInterval);
+        }
+        
+        cooldownInterval = setInterval(() => {
+            timeRemaining -= 1000;
+            
+            if (timeRemaining <= 0) {
+                clearInterval(cooldownInterval);
+                cooldownMessage.style.display = 'none';
+                requestCount = 0;
+                updateRequestCounter();
+                return;
+            }
+            
+            const minutes = Math.floor(timeRemaining / 60000);
+            const seconds = Math.floor((timeRemaining % 60000) / 1000);
+            cooldownTimer.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }, 1000);
+        
+        // Actualizar inmediatamente
+        const minutes = Math.floor(timeRemaining / 60000);
+        const seconds = Math.floor((timeRemaining % 60000) / 1000);
+        cooldownTimer.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function showNotification(message, isSuccess = true) {
+        notification.textContent = message;
+        notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#ff6666';
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    async function searchContent(page = 1) {
+        // Verificar si el usuario ha ingresado su nombre
+        if (!userName) {
+            showNotification('Por favor ingresa tu nombre primero', false);
+            showUserModal();
+            return;
+        }
+
+        currentPage = page;
+        const mediaType = document.getElementById('mediaType').value;
+        const platformId = document.getElementById('platform').value;
+        const genreId = document.getElementById('genre').value;
+        const year = document.getElementById('year').value;
+        const country = document.getElementById('country').value;
+
+        let url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${apiKey}&page=${page}&sort_by=popularity.desc&language=es`;
+
+        if (platformId) url += `&with_watch_providers=${platformId}`;
+        if (genreId) url += `&with_genres=${genreId}`;
+        if (year) {
+            if (mediaType === 'movie') {
+                url += `&primary_release_year=${year}`;
+            } else if (mediaType === 'tv') {
+                url += `&first_air_date_year=${year}`;
+            }
+        }
+        if (country) url += `&watch_region=${country}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            totalPages = data.total_pages;
+            currentContent = data.results;
+
+            displayContent(currentContent);
+            updatePagination();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            showNotification('Error al cargar los datos', false);
+        }
+    }
+
+    function displayContent(content) {
+        const contentList = document.getElementById('contentList');
+        const contentCount = document.getElementById('contentCount');
+        contentList.innerHTML = '';
+
+        contentCount.textContent = `Total de Resultados: ${content.length}`;
+
+        content.forEach((item, index) => {
+            const releaseDate = item.release_date || item.first_air_date || 'Sin fecha';
+            const year = releaseDate.split('-')[0];
+            const id = item.id;
+            const mediaType = document.getElementById('mediaType').value;
+
+            const contentItem = document.createElement('div');
+            contentItem.className = 'content-item';
+            contentItem.innerHTML = `
+                <div class="loader" id="loader-${id}">
+                    <div class="loader-spinner"></div>
+                </div>
+                <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}">
+                <h3>${item.title || item.name}</h3>
+                <p>${year}</p>
+                <p>(${id})</p>
+            `;
+            
+            // Agregar evento de clic para enviar automáticamente
+            contentItem.addEventListener('click', () => {
+                sendOrderAutomatically(item, mediaType);
+            });
+            
+            contentList.appendChild(contentItem);
+        });
+    }
+
+    async function sendOrderAutomatically(item, mediaType) {
+        // Verificar si el usuario ha ingresado su nombre
+        if (!userName) {
+            showNotification('Por favor ingresa tu nombre primero', false);
+            showUserModal();
+            return;
+        }
+
+        // Verificar límite de pedidos
+        const now = Date.now();
+        if (requestCount >= 3) {
+            if (lastRequestTime && (now - lastRequestTime) < (5 * 60 * 1000)) {
+                const timeRemaining = (5 * 60 * 1000) - (now - lastRequestTime);
+                const minutes = Math.floor(timeRemaining / 60000);
+                const seconds = Math.floor((timeRemaining % 60000) / 1000);
+                
+                showNotification(`Límite alcanzado. Espera ${minutes}:${seconds < 10 ? '0' : ''}${seconds} minutos`, false);
+                return;
+            } else {
+                // Reiniciar contador si ha pasado el tiempo de espera
+                requestCount = 0;
+            }
+        }
+
+        const releaseDate = item.release_date || item.first_air_date || 'Sin fecha';
+        const year = releaseDate.split('-')[0];
+        const title = item.title || item.name;
+        const id = item.id;
+        
+        // Mostrar loader
+        const loader = document.getElementById(`loader-${id}`);
+        if (loader) loader.classList.add('show');
+        
+        // Incrementar contador de pedidos
+        requestCount++;
+        lastRequestTime = now;
+        localStorage.setItem('tmdbRequestCount', requestCount);
+        localStorage.setItem('tmdbLastRequestTime', lastRequestTime);
+        updateRequestCounter();
+        
+        // Iniciar temporizador de espera si se alcanzó el límite
+        if (requestCount >= 3) {
+            startCooldownTimer(5 * 60 * 1000); // 5 minutos
+        }
+        
+        // Preparar datos para el envío en español
+        const formData = new FormData();
+        formData.append('Título', title);
+        formData.append('Año', year);
+        formData.append('ID', id);
+        formData.append('Tipo', mediaType === 'movie' ? 'Película' : 'Serie');
+        formData.append('Plataforma', getPlatformName());
+        formData.append('Género', getGenreName());
+        formData.append('País', getCountryName());
+        formData.append('Solicitante', userName);
+        
+        // Agregar información de notificación si está habilitada
+        if (notifyMe && userEmail) {
+            formData.append('Email para notificaciones', userEmail);
+            formData.append('Notificar cuando esté en MegaPLUS+', 'SÍ');
+        } else {
+            formData.append('Notificar cuando esté en MegaPLUS+', 'NO');
+        }
+        
+        formData.append('Fecha de solicitud', new Date().toLocaleString('es-ES'));
+        formData.append('Asunto', `Solicitud de ${mediaType === 'movie' ? 'película' : 'serie'}: ${title} por ${userName}`);
+        
+        try {
+            // Enviar a Formspree
+            const response = await fetch('https://formspree.io/f/xovnwvdl', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                let message = `Solicitud enviada: ${title} (${requestCount}/3)`;
+                if (notifyMe && userEmail) {
+                    message += ". Te notificaremos cuando esté en MegaPLUS+";
+                }
+                showNotification(message, true);
+            } else {
+                throw new Error('Error en la respuesta del servidor');
+            }
+        } catch (error) {
+            console.error('Error sending request:', error);
+            showNotification('Error al enviar la solicitud', false);
+            // Revertir el contador si hay error
+            requestCount--;
+            updateRequestCounter();
+        } finally {
+            // Ocultar loader
+            if (loader) loader.classList.remove('show');
+        }
+    }
+
+    function getPlatformName() {
+        const platformSelect = document.getElementById('platform');
+        const selectedOption = platformSelect.options[platformSelect.selectedIndex];
+        return selectedOption.text || 'No especificada';
+    }
+
+    function getGenreName() {
+        const genreSelect = document.getElementById('genre');
+        const selectedOption = genreSelect.options[genreSelect.selectedIndex];
+        return selectedOption.text || 'No especificado';
+    }
+
+    function getCountryName() {
+        const countrySelect = document.getElementById('country');
+        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+        return selectedOption.text || 'No especificado';
+    }
+
+    function updatePagination() {
+        document.getElementById('pagination').style.display = totalPages > 1 ? 'flex' : 'none';
+        document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = currentPage === totalPages;
+    }
+
+    function changePage(direction) {
+        if (currentPage + direction >= 1 && currentPage + direction <= totalPages) {
+            searchContent(currentPage + direction);
+        }
+    }
+</script>
+
 </body>
 </html>
