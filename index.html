@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Generador de Plataformas TMDB</title>
+    <title>Generador de Contenido TMDB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -361,6 +361,118 @@
             margin-top: 0;
         }
 
+        /* Content Modal Styles */
+        .content-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .content-modal-content {
+            background-color: #1c1c1c;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-modal-header {
+            padding: 20px;
+            background-color: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ffcc00;
+        }
+
+        .content-modal-header h2 {
+            color: #ffcc00;
+            margin: 0;
+            font-size: 1.0rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: auto;
+            max-width: none;
+        }
+
+        .content-modal-body {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .content-modal-poster {
+            flex: 0 0 90px;
+        }
+
+        .content-modal-poster img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .content-modal-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .content-modal-info h3 {
+            color: #ffcc00;
+            margin-top: 0;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #ffcc00;
+            min-width: 65px;
+        }
+
+        .info-value {
+            color: #fff;
+            flex: 1;
+        }
+
+        .content-modal-synopsis {
+            margin-top: 2px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .content-modal-synopsis p {
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .content-modal-actions {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+
         @media (max-width: 76px) {
             .content-list {
                 grid-template-columns: repeat(2, 1fr);
@@ -374,6 +486,19 @@
                 flex-direction: column;
                 gap: 15px;
             }
+
+            .content-modal-body {
+                flex-direction: column;
+            }
+
+            .content-modal-poster {
+                flex: 0 0 auto;
+                text-align: center;
+            }
+
+            .content-modal-poster img {
+                max-width: 250px;
+            }
         }
 
         @media (max-width: 48px) {
@@ -381,6 +506,46 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        .series-limit-notice {
+    text-align: center;
+    margin: 10px 0 20px;
+    padding: 12px 15px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    color: #ffcc00;
+    font-size: 0.9rem;
+    border: 1px solid #ffcc00;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 2px 8px rgba(255, 204, 0, 0.15);
+}
+
+.series-limit-notice i {
+    margin-right: 8px;
+    color: #ffcc00;
+}
+
+.notice-example {
+    font-size: 0.85rem;
+    color: #bbb;
+    margin: 5px 0 0 0;
+    font-style: italic;
+}
+
+.reason {
+    font-style: italic;
+    color: #bbb;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #222;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border-left: 3px solid #ffcc00;
+    text-align: center;
+}
     </style>
 </head>
 <body>
@@ -403,6 +568,12 @@
     <p id="cooldownMessage" style="display: none;">Tiempo de espera: <span class="cooldown-timer" id="cooldownTimer">5:00</span></p>
 </div>
 
+<div class="series-limit-notice">
+    <p><i class="fas fa-exclamation-circle"></i> Aviso: No aceptamos series con muchas temporadas o episodios.</p>
+    <p class="notice-example">Ej: 8 con 10 episodios ✓ (si) | 8 con 20+ episodios ✗ (no)</p>
+    <p class="reason">Motivo: Mi equipo de trabajo es limitado (solo yo) no puedo gestionar series con una cantidad excesiva de episodios. ¡Gracias por su comprensión!</p>
+</div>
+
 <div class="filters">
     <div class="search-container">
         <input type="text" id="searchTitle" placeholder="Buscar por título..." autocomplete="off">
@@ -414,32 +585,9 @@
         <option value="tv">Series</option>
     </select>
 
-    <select id="platform">
-        <option value="">Plataformas</option>
-        <option value="8">Netflix</option>
-        <option value="337">Disney+</option>
-        <option value="9">Amazon Prime Video</option>
-        <option value="384">HBO Max</option>
-        <option value="15">Hulu</option>
-        <option value="387">Paramount+</option>
-        <option value="350">Apple TV+</option>
-        <option value="531">Star+</option>
-    </select>
-
     <select id="genre">
         <option value="">Todos los géneros</option>
-        <option value="28">Acción</option>
-        <option value="12">Aventura</option>
-        <option value="16">Animación</option>
-        <option value="35">Comedia</option>
-        <option value="80">Crimen</option>
-        <option value="18">Drama</option>
-        <option value="10751">Familiar</option>
-        <option value="14">Fantasía</option>
-        <option value="27">Horror</option>
-        <option value="9648">Misterio</option>
-        <option value="878">Ciencia Ficción</option>
-        <option value="53">Suspenso</option>
+        <!-- Los géneros se cargarán dinámicamente según el tipo de contenido -->
     </select>
 
     <select id="year">
@@ -449,20 +597,6 @@
                 document.write(`<option value="${i}">${i}</option>`);
             }
         </script>
-    </select>
-
-    <select id="country">
-        <option value="">Selecciona un País</option>
-        <option value="US">Estados Unidos</option>
-        <option value="MX">México</option>
-        <option value="ES">España</option>
-        <option value="AR">Argentina</option>
-        <option value="CO">Colombia</option>
-        <option value="BR">Brasil</option>
-        <option value="CA">Canadá</option>
-        <option value="GB">Reino Unido</option>
-        <option value="DE">Alemania</option>
-        <option value="FR">Francia</option>
     </select>
 </div>
 
@@ -513,6 +647,53 @@
     </div>
 </div>
 
+<!-- Modal para información del contenido -->
+<div id="contentModal" class="content-modal">
+    <div class="content-modal-content">
+        <div class="content-modal-header">
+            <h2 id="modalTitle"></h2>
+            <button class="close-modal" onclick="closeContentModal()">&times;</button>
+        </div>
+        <div class="content-modal-body">
+            <div class="content-modal-poster">
+                <img id="modalPoster" src="" alt="">
+            </div>
+            <div class="content-modal-info">
+                <h3>Información</h3>
+                <div class="info-item">
+                    <span class="info-label">Título:</span>
+                    <span class="info-value" id="modalTitleText"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Año:</span>
+                    <span class="info-value" id="modalYear"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Géneros:</span>
+                    <span class="info-value" id="modalGenres"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Duración:</span>
+                    <span class="info-value" id="modalDuration"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value" id="modalId"></span>
+                </div>
+                <div class="content-modal-synopsis">
+                    <h3>Sinopsis</h3>
+                    <p id="modalOverview"></p>
+                </div>
+            </div>
+        </div>
+        <div class="content-modal-actions">
+            <button onclick="sendOrderFromModal()" id="modalRequestBtn">
+                <i class="fas fa-paper-plane"></i> Solicitar Contenido
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     const apiKey = '1715f9106c23e43297aafeccdbc89c20';
     let currentPage = 1;
@@ -525,10 +706,57 @@
     let lastRequestTime = null;
     let cooldownInterval = null;
     let searchTimeout = null;
+    let currentSelectedItem = null;
+    let currentMediaType = 'movie';
+
+    // Géneros específicos para cada tipo de contenido
+    const movieGenres = {
+        "": "Todos los géneros",
+        "28": "Acción",
+        "12": "Aventura",
+        "16": "Animación",
+        "35": "Comedia",
+        "80": "Crimen",
+        "99": "Documental",
+        "18": "Drama",
+        "10751": "Familiar",
+        "14": "Fantasía",
+        "36": "Historia",
+        "27": "Terror",
+        "10402": "Música",
+        "9648": "Misterio",
+        "10749": "Romance",
+        "878": "Ciencia Ficción",
+        "10770": "Película de TV",
+        "53": "Suspenso",
+        "10752": "Bélica",
+        "37": "Western"
+    };
+
+    const tvGenres = {
+        "": "Todos los géneros",
+        "10759": "Acción y Aventura",
+        "16": "Animación",
+        "35": "Comedia",
+        "80": "Crimen",
+        "99": "Documental",
+        "18": "Drama",
+        "10751": "Familiar",
+        "10762": "Kids",
+        "9648": "Misterio",
+        "10763": "Noticias",
+        "10764": "Reality",
+        "10765": "Sci-Fi & Fantasía",
+        "10766": "Soap",
+        "10767": "Talk",
+        "10768": "Guerra y Política",
+        "37": "Western"
+    };
 
     // Obtener elementos de la interfaz
     const notification = document.getElementById('notification');
     const userModal = document.getElementById('userModal');
+    const contentModal = document.getElementById('contentModal');
     const userNameDisplay = document.getElementById('userNameDisplay');
     const requestCountDisplay = document.getElementById('requestCount');
     const currentRequestsDisplay = document.getElementById('currentRequests');
@@ -536,6 +764,47 @@
     const cooldownTimer = document.getElementById('cooldownTimer');
     const searchTitleInput = document.getElementById('searchTitle');
     const searchSuggestions = document.getElementById('searchSuggestions');
+    const mediaTypeSelect = document.getElementById('mediaType');
+    const genreSelect = document.getElementById('genre');
+
+    // Elementos del modal de contenido
+    const modalTitle = document.getElementById('modalTitle');
+    const modalTitleText = document.getElementById('modalTitleText');
+    const modalPoster = document.getElementById('modalPoster');
+    const modalYear = document.getElementById('modalYear');
+    const modalGenres = document.getElementById('modalGenres');
+    const modalDuration = document.getElementById('modalDuration');
+    const modalId = document.getElementById('modalId');
+    const modalOverview = document.getElementById('modalOverview');
+    const modalRequestBtn = document.getElementById('modalRequestBtn');
+
+    // Función para actualizar los géneros según el tipo de contenido seleccionado
+    function updateGenres() {
+        const selectedMediaType = mediaTypeSelect.value;
+        let genres;
+        
+        switch(selectedMediaType) {
+            case 'movie':
+                genres = movieGenres;
+                break;
+            case 'tv':
+                genres = tvGenres;
+                break;
+            default:
+                genres = movieGenres;
+        }
+        
+        // Limpiar select de géneros
+        genreSelect.innerHTML = '';
+        
+        // Agregar opciones de géneros (mantener "Todos los géneros" primero)
+        for (const [id, name] of Object.entries(genres)) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = name;
+            genreSelect.appendChild(option);
+        }
+    }
 
     // Verificar si ya hay datos guardados al cargar la página
     window.addEventListener('DOMContentLoaded', () => {
@@ -570,6 +839,12 @@
             lastRequestTime = parseInt(savedLastRequestTime);
             checkCooldown();
         }
+        
+        // Inicializar géneros
+        updateGenres();
+        
+        // Escuchar cambios en el tipo de contenido
+        mediaTypeSelect.addEventListener('change', updateGenres);
         
         // Mostrar el modal si no hay nombre guardado
         if (!userName) {
@@ -650,6 +925,14 @@
 
     function closeUserModal() {
         userModal.style.display = 'none';
+    }
+
+    function showContentModal() {
+        contentModal.style.display = 'flex';
+    }
+
+    function closeContentModal() {
+        contentModal.style.display = 'none';
     }
 
     function saveUserData() {
@@ -751,13 +1034,13 @@
 
         currentPage = page;
         const mediaType = document.getElementById('mediaType').value;
-        const platformId = document.getElementById('platform').value;
         const genreId = document.getElementById('genre').value;
         const year = document.getElementById('year').value;
-        const country = document.getElementById('country').value;
         const searchQuery = searchTitleInput.value.trim();
 
         let url;
+        
+        currentMediaType = mediaType;
         
         if (searchQuery) {
             // Búsqueda por título
@@ -766,7 +1049,6 @@
             // Búsqueda por filtros
             url = `https://api.themoviedb.org/3/discover/${mediaType}?api_key=${apiKey}&page=${page}&sort_by=popularity.desc&language=es`;
 
-            if (platformId) url += `&with_watch_providers=${platformId}`;
             if (genreId) url += `&with_genres=${genreId}`;
             if (year) {
                 if (mediaType === 'movie') {
@@ -775,16 +1057,15 @@
                     url += `&first_air_date_year=${year}`;
                 }
             }
-            if (country) url += `&watch_region=${country}`;
         }
 
         try {
             const response = await fetch(url);
             const data = await response.json();
             totalPages = data.total_pages > 500 ? 500 : data.total_pages; // La API limita a 500 páginas
-            currentContent = data.results;
+            currentContent = data.results || [];
 
-            displayContent(currentContent);
+            displayContent(currentContent, mediaType);
             updatePagination();
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -798,12 +1079,12 @@
         searchContent();
     }
 
-    function displayContent(content) {
+    function displayContent(content, mediaType) {
         const contentList = document.getElementById('contentList');
         const contentCount = document.getElementById('contentCount');
         contentList.innerHTML = '';
 
-        contentCount.textContent = `Total de Resultados: ${content.length}`;
+        contentCount.textContent = `Resultados: ${content.length}`;
 
         if (content.length === 0) {
             contentList.innerHTML = '<p>No se encontraron resultados</p>';
@@ -814,27 +1095,88 @@
             const releaseDate = item.release_date || item.first_air_date || 'Sin fecha';
             const year = releaseDate.split('-')[0];
             const id = item.id;
-            const mediaType = document.getElementById('mediaType').value;
+            const title = item.title || item.name;
+            const posterPath = item.poster_path;
 
             const contentItem = document.createElement('div');
             contentItem.className = 'content-item';
             contentItem.innerHTML = `
-                <div class="loader" id="loader-${id}">
-                    <div class="loader-spinner"></div>
-                </div>
-                <img src="${item.poster_path ? 'https://image.tmdb.org/t/p/w500' + item.poster_path : 'https://via.placeholder.com/500x750/1c1c1c/ffcc00?text=Imagen+no+disponible'}" alt="${item.title || item.name}">
-                <h3>${item.title || item.name}</h3>
+                <img src="${posterPath ? 'https://image.tmdb.org/t/p/w500' + posterPath : 'https://via.placeholder.com/500x750/1c1c1c/ffcc00?text=Imagen+no+disponible'}" alt="${title}">
+                <h3>${title}</h3>
                 <p>${year}</p>
                 <p>(${id})</p>
             `;
             
-            // Agregar evento de clic para enviar automáticamente
+            // Agregar evento de clic para mostrar información detallada
             contentItem.addEventListener('click', () => {
-                sendOrderAutomatically(item, mediaType);
+                showContentDetails(item, mediaType);
             });
             
             contentList.appendChild(contentItem);
         });
+    }
+
+    async function showContentDetails(item, mediaType) {
+        const id = item.id;
+        
+        try {
+            // Obtener detalles adicionales del contenido
+            const response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${apiKey}&language=es`);
+            const details = await response.json();
+            
+            // Llenar el modal con la información
+            const title = details.title || details.name;
+            modalTitle.textContent = title;
+            modalTitleText.textContent = title;
+            
+            const releaseDate = details.release_date || details.first_air_date || 'Sin fecha';
+            const year = releaseDate.split('-')[0];
+            modalYear.textContent = year;
+            
+            // Obtener nombres de géneros
+            const genres = details.genres.map(genre => genre.name).join(', ');
+            modalGenres.textContent = genres || 'No especificado';
+            
+            // Duración
+            if (mediaType === 'movie') {
+                const runtime = details.runtime || 'No especificado';
+                modalDuration.textContent = `${runtime} minutos`;
+            } else {
+                const episodeRuntime = details.episode_run_time && details.episode_run_time.length > 0 
+                    ? `${details.episode_run_time[0]} minutos por episodio` 
+                    : 'No especificado';
+                modalDuration.textContent = episodeRuntime;
+            }
+            
+            modalId.textContent = id;
+            
+            // Imagen del póster
+            const posterPath = details.poster_path;
+            modalPoster.src = posterPath 
+                ? 'https://image.tmdb.org/t/p/w500' + posterPath 
+                : 'https://via.placeholder.com/500x750/1c1c1c/ffcc00?text=Imagen+no+disponible';
+            modalPoster.alt = title;
+            
+            // Sinopsis
+            modalOverview.textContent = details.overview || 'No hay sinopsis disponible.';
+            
+            // Guardar el elemento actual para usarlo al solicitar
+            currentSelectedItem = details;
+            
+            // Mostrar el modal
+            showContentModal();
+            
+        } catch (error) {
+            console.error('Error fetching content details:', error);
+            showNotification('Error al cargar los detalles del contenido', false);
+        }
+    }
+
+    function sendOrderFromModal() {
+        if (currentSelectedItem) {
+            sendOrderAutomatically(currentSelectedItem, currentMediaType);
+            closeContentModal();
+        }
     }
 
     async function sendOrderAutomatically(item, mediaType) {
@@ -866,9 +1208,13 @@
         const title = item.title || item.name;
         const id = item.id;
         
-        // Mostrar loader
-        const loader = document.getElementById(`loader-${id}`);
-        if (loader) loader.classList.add('show');
+        // Obtener nombres de géneros
+        const genres = item.genres ? item.genres.map(genre => genre.name).join(', ') : 'No especificado';
+        
+        // Mostrar loader en el botón del modal
+        const originalText = modalRequestBtn.innerHTML;
+        modalRequestBtn.innerHTML = '<div class="loader-spinner" style="width: 20px; height: 20px;"></div> Enviando...';
+        modalRequestBtn.disabled = true;
         
         // Incrementar contador de pedidos
         requestCount++;
@@ -888,9 +1234,7 @@
         formData.append('Año', year);
         formData.append('ID', id);
         formData.append('Tipo', mediaType === 'movie' ? 'Película' : 'Serie');
-        formData.append('Plataforma', getPlatformName());
-        formData.append('Género', getGenreName());
-        formData.append('País', getCountryName());
+        formData.append('Géneros', genres);
         formData.append('Solicitante', userName);
         
         // Agregar información de notificación si está habilitada
@@ -930,26 +1274,15 @@
             requestCount--;
             updateRequestCounter();
         } finally {
-            // Ocultar loader
-            if (loader) loader.classList.remove('show');
+            // Restaurar el botón
+            modalRequestBtn.innerHTML = originalText;
+            modalRequestBtn.disabled = false;
         }
-    }
-
-    function getPlatformName() {
-        const platformSelect = document.getElementById('platform');
-        const selectedOption = platformSelect.options[platformSelect.selectedIndex];
-        return selectedOption.text || 'No especificada';
     }
 
     function getGenreName() {
         const genreSelect = document.getElementById('genre');
         const selectedOption = genreSelect.options[genreSelect.selectedIndex];
-        return selectedOption.text || 'No especificado';
-    }
-
-    function getCountryName() {
-        const countrySelect = document.getElementById('country');
-        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
         return selectedOption.text || 'No especificado';
     }
 
